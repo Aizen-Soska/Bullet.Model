@@ -1,0 +1,203 @@
+namespace Bullet.Model
+{
+    public class BulletParameters
+    {
+        /// <summary>
+        /// Длина пули
+        /// </summary>
+        private static Parameter<float> _length = new
+            Parameter<float>(Constants.MIN_LENGTH, 56, Constants.MAX_LENGTH);
+
+        /// <summary>
+        /// Свойство длины пули
+        /// </summary>
+        public float Length
+        {
+            get => _length.Value;
+            set
+            {
+                if (Validator.ValidateParameter(_length, value))
+                {
+                    _length.Value = value;
+                }
+                else
+                {
+                    throw new Exception($"Длина пули должна быть задана в диапазоне:" +
+                        $" [{Constants.MIN_LENGTH}-{Constants.MAX_LENGTH}]");
+                }
+            }
+        }
+
+        /// <summary>
+        /// Диаметр основания пули
+        /// </summary>
+        private static Parameter<float> _baseDiameter = new
+            Parameter<float>(Constants.MIN_BASE_DIAMETER, 11.35f, Constants.MAX_BASE_DIAMETER);
+
+        /// <summary>
+        /// Свойство диаметра основания пули
+        /// </summary>
+        public float BaseDiameter
+        {
+            get => _baseDiameter.Value;
+            set
+            {
+                if (Validator.ValidateParameter(_baseDiameter, value))
+                {
+                    _baseDiameter.Value = value;
+                }
+                else
+                {
+                    throw new Exception($"Диаметр основания пули должен быть задан в диапазоне:" +
+                        $" [{Constants.MIN_BASE_DIAMETER}-{Constants.MAX_BASE_DIAMETER}]");
+                }
+            }
+        }
+
+        /// <summary>
+        /// Диаметр шеи гильзы
+        /// </summary>
+        private static Parameter<float> _neckDiameter = new
+            Parameter<float>(Constants.MIN_NECK_DIAMETER, 8.6f, Constants.MAX_NECK_DIAMETER);
+
+        /// <summary>
+        /// Свойство диаметра шеи гильзы
+        /// </summary>
+        public float NeckDiameter
+        {
+            get => _neckDiameter.Value;
+            set
+            {
+                if (Validator.ValidateParameter(_neckDiameter, value))
+                {
+                    _neckDiameter.Value = value;
+                }
+                else
+                {
+                    throw new Exception($"Диаметр шеи гильзы должен быть задан в диапазоне:" +
+                        $" [{Constants.MIN_NECK_DIAMETER}-{Constants.MAX_NECK_DIAMETER}]");
+                }
+            }
+        }
+
+        /// <summary>
+        /// Масса пули
+        /// </summary>
+        private static Parameter<float> _mass = new
+            Parameter<float>(Constants.MIN_MASS, 8, Constants.MAX_MASS);
+
+        /// <summary>
+        /// Свойство массы пули
+        /// </summary>
+        public float Mass
+        {
+            get => _mass.Value;
+            set
+            {
+                if (Validator.ValidateParameter(_mass, value))
+                {
+                    _mass.Value = value;
+                }
+                else
+                {
+                    throw new Exception($"Масса пули должна быть задана в диапазоне:" +
+                        $" [{Constants.MIN_MASS}-{Constants.MAX_MASS}]");
+                }
+            }
+        }
+
+        /// <summary>
+        /// Скорость пули (зависит от массы пули)
+        /// </summary>
+        private static Parameter<float> _velocity = new
+            Parameter<float>(Constants.MIN_VELOCITY, 740, Constants.MAX_VELOCITY);
+
+        /// <summary>
+        /// Свойство скорости пули
+        /// </summary>
+        public float Velocity
+        {
+            get => _velocity.Value;
+            set
+            {
+                if (Validator.ValidateParameter(_velocity, value) && (value >= CalculateMinVelocity(_mass.Value)))
+                {
+                    _velocity.Value = value;
+                }
+                else
+                {
+                    throw new Exception($"Скорость пули должна быть задана в диапазоне:" +
+                        $" [{Constants.MIN_VELOCITY}-{Constants.MAX_VELOCITY}] и соответствовать массе пули.");
+                }
+            }
+        }
+
+        /// <summary>
+        /// Диаметр плеча
+        /// </summary>
+        private static Parameter<float> _shoulderDiameter = new
+            Parameter<float>(Constants.MIN_SHOULDER_DIAMETER, 10.07f, Constants.MAX_SHOULDER_DIAMETER);
+
+        /// <summary>
+        /// Свойство диаметра плеча
+        /// </summary>
+        public float ShoulderDiameter
+        {
+            get => _shoulderDiameter.Value;
+            set
+            {
+                if (Validator.ValidateParameter(_shoulderDiameter, value))
+                {
+                    _shoulderDiameter.Value = value;
+                }
+                else
+                {
+                    throw new Exception($"Диаметр плеча должен быть задан в диапазоне:" +
+                        $" [{Constants.MIN_SHOULDER_DIAMETER}-{Constants.MAX_SHOULDER_DIAMETER}]");
+                }
+            }
+        }
+
+        /// <summary>
+        /// Диаметр шеи (зависит от диаметра плеча)
+        /// </summary>
+        private static Parameter<float> _neckDiameterDependent = new
+            Parameter<float>(Constants.MIN_NECK_DIAMETER, 8.6f, Constants.MAX_NECK_DIAMETER);
+
+        /// <summary>
+        /// Свойство диаметра шеи
+        /// </summary>
+        public float NeckDiameterDependent
+        {
+            get => _neckDiameterDependent.Value;
+            set
+            {
+                if (Validator.ValidateParameter(_neckDiameterDependent, value) && (value <= _shoulderDiameter.Value))
+                {
+                    _neckDiameterDependent.Value = value;
+                }
+                else
+                {
+                    throw new Exception($"Диаметр шеи должен быть задан в диапазоне:" +
+                        $" [{Constants.MIN_NECK_DIAMETER}-{Constants.MAX_NECK_DIAMETER}] и быть меньше или равен диаметру плеча.");
+                }
+            }
+        }
+
+        /// <summary>
+        /// Вычисляет минимально допустимую скорость пули в зависимости от её массы.
+        /// </summary>
+        /// <param name="mass">Масса пули</param>
+        /// <returns>Минимально допустимая скорость</returns>
+        private float CalculateMinVelocity(float mass)
+        {
+            // Пример упрощенной формулы для расчета минимальной скорости
+            return Constants.MIN_VELOCITY + (mass * 10);
+        }
+
+        public void Print()
+        {
+            Console.WriteLine("{0} {1} {2} {3} {4} {5} {6}", Length, BaseDiameter, NeckDiameter, Mass, Velocity, ShoulderDiameter, NeckDiameterDependent);
+        }
+    }
+}
